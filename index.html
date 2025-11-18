@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mixed 4K Slider</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .slider-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #000 100%);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* 4K Animation Slide */
+    .animation-slide {
+      background: linear-gradient(45deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease-in-out infinite;
+    }
+
+    .chart-container {
+      width: 90vw;
+      height: 90vh;
+      max-width: 3840px;
+      max-height: 2160px;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Chart animations for mixed slider */
+    .mixed-chart-line {
+      fill: none;
+      stroke: #00ff88;
+      stroke-width: 12;
+      stroke-dasharray: 3000;
+      stroke-dashoffset: 3000;
+      animation: drawMixedLine 10s ease-in-out infinite;
+      filter: drop-shadow(0 0 15px #00ff88);
+    }
+
+    .mixed-chart-bar {
+      fill: #ff6b6b;
+      opacity: 0;
+      animation: fadeMixedBar 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px #ff6b6b);
+    }
+
+    .mixed-chart-bar:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .mixed-chart-bar:nth-child(2) {
+      animation-delay: 1s;
+    }
+
+    .mixed-chart-bar:nth-child(3) {
+      animation-delay: 2s;
+    }
+
+    .mixed-chart-bar:nth-child(4) {
+      animation-delay: 3s;
+    }
+
+    .mixed-chart-bar:nth-child(5) {
+      animation-delay: 4s;
+    }
+
+    .mixed-chart-bar:nth-child(6) {
+      animation-delay: 5s;
+    }
+
+    .mixed-chart-point {
+      fill: #ffcc02;
+      animation: growMixedPoint 12s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px #ffcc02);
+    }
+
+    .mixed-chart-point:nth-child(1) {
+      animation-delay: 6s;
+    }
+
+    .mixed-chart-point:nth-child(2) {
+      animation-delay: 7s;
+    }
+
+    .mixed-chart-point:nth-child(3) {
+      animation-delay: 8s;
+    }
+
+    .mixed-chart-point:nth-child(4) {
+      animation-delay: 9s;
+    }
+
+    .mixed-chart-point:nth-child(5) {
+      animation-delay: 10s;
+    }
+
+    .mixed-chart-point:nth-child(6) {
+      animation-delay: 11s;
+    }
+
+    .mixed-chart-text {
+      fill: #ffffff;
+      font-size: 48px;
+      font-weight: 600;
+      opacity: 0;
+      animation: fadeMixedText 15s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px #ffffff);
+    }
+
+    .mixed-chart-title {
+      fill: #ffffff;
+      font-size: 96px;
+      font-weight: bold;
+      text-anchor: middle;
+      animation: pulseMixedTitle 15s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px #ffffff);
+    }
+
+    @keyframes gradientShift {
+
+      0%,
+      100% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    @keyframes drawMixedLine {
+      0% {
+        stroke-dashoffset: 3000;
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 1;
+      }
+
+      30% {
+        stroke-dashoffset: 0;
+      }
+
+      70% {
+        stroke-dashoffset: 0;
+      }
+
+      90% {
+        opacity: 1;
+      }
+
+      100% {
+        stroke-dashoffset: 3000;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeMixedBar {
+      0% {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+
+      15% {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+
+      85% {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+    }
+
+    @keyframes growMixedPoint {
+      0% {
+        r: 0;
+        opacity: 0;
+      }
+
+      20% {
+        r: 16;
+        opacity: 1;
+      }
+
+      80% {
+        r: 16;
+        opacity: 1;
+      }
+
+      100% {
+        r: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeMixedText {
+      0% {
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulseMixedTitle {
+      0% {
+        opacity: 0.7;
+        transform: scale(0.95);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.7;
+        transform: scale(0.95);
+      }
+    }
+
+    /* Split slide styles */
+    .split-slide {
+      display: flex;
+      flex-direction: row;
+    }
+
+    .split-left {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      background: linear-gradient(45deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 10s ease-in-out infinite;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .split-right {
+      width: 50%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .split-right video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .split-chart-container {
+      width: 90%;
+      height: 90%;
+      max-width: 1920px;
+      max-height: 2160px;
+    }
+
+    .split-chart-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Split chart animations */
+    .split-chart-line {
+      fill: none;
+      stroke: #00ff88;
+      stroke-width: 8;
+      stroke-dasharray: 2000;
+      stroke-dashoffset: 2000;
+      animation: drawSplitLine 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 12px #00ff88);
+    }
+
+    .split-chart-bar {
+      fill: #ff6b6b;
+      opacity: 0;
+      animation: fadeSplitBar 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 8px #ff6b6b);
+    }
+
+    .split-chart-bar:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .split-chart-bar:nth-child(2) {
+      animation-delay: 0.8s;
+    }
+
+    .split-chart-bar:nth-child(3) {
+      animation-delay: 1.6s;
+    }
+
+    .split-chart-bar:nth-child(4) {
+      animation-delay: 2.4s;
+    }
+
+    .split-chart-bar:nth-child(5) {
+      animation-delay: 3.2s;
+    }
+
+    .split-chart-point {
+      fill: #ffcc02;
+      animation: growSplitPoint 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 6px #ffcc02);
+    }
+
+    .split-chart-point:nth-child(1) {
+      animation-delay: 4s;
+    }
+
+    .split-chart-point:nth-child(2) {
+      animation-delay: 4.5s;
+    }
+
+    .split-chart-point:nth-child(3) {
+      animation-delay: 5s;
+    }
+
+    .split-chart-point:nth-child(4) {
+      animation-delay: 5.5s;
+    }
+
+    .split-chart-point:nth-child(5) {
+      animation-delay: 6s;
+    }
+
+    .split-chart-title {
+      fill: #ffffff;
+      font-size: 64px;
+      font-weight: bold;
+      text-anchor: middle;
+      animation: pulseSplitTitle 10s ease-in-out infinite;
+      filter: drop-shadow(0 0 15px #ffffff);
+    }
+
+    @keyframes drawSplitLine {
+      0% {
+        stroke-dashoffset: 2000;
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      40% {
+        stroke-dashoffset: 0;
+      }
+
+      60% {
+        stroke-dashoffset: 0;
+      }
+
+      85% {
+        opacity: 1;
+      }
+
+      100% {
+        stroke-dashoffset: 2000;
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeSplitBar {
+      0% {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+
+      20% {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+
+      80% {
+        opacity: 1;
+        transform: scaleY(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scaleY(0);
+      }
+    }
+
+    @keyframes growSplitPoint {
+      0% {
+        r: 0;
+        opacity: 0;
+      }
+
+      25% {
+        r: 10;
+        opacity: 1;
+      }
+
+      75% {
+        r: 10;
+        opacity: 1;
+      }
+
+      100% {
+        r: 0;
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulseSplitTitle {
+      0% {
+        opacity: 0.8;
+        transform: scale(0.9);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.8;
+        transform: scale(0.9);
+      }
+    }
+
+    /* JS Animation Slide */
+    .js-animation-slide {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #2d1b69 50%, #1a1a2e 75%, #0a0a0a 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease-in-out infinite;
+    }
+
+    .js-animation-slide canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Slide labels */
+    .slide-label {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: green;
+      color: black;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      animation: slideLabel 0.5s ease-out;
+    }
+
+    .slide-label.svg-animation {
+      border-left: 4px solid #00ff88;
+    }
+
+    .slide-label.js-animation {
+      border-left: 4px solid #ffcc02;
+    }
+
+    .slide-label.video {
+      border-left: 4px solid #ff6b6b;
+    }
+
+    .slide-label.image {
+      border-left: 4px solid #45b7d1;
+    }
+
+    .slide-label.split {
+      border-left: 4px solid #4ecdc4;
+    }
+
+    @keyframes slideLabel {
+      0% {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="slider-container">
+    <!-- Animation Slide 1 -->
+    <div class="slide animation-slide active" data-type="animation" data-duration="15000">
+      <div class="slide-label svg-animation">📊 SVG Animation</div>
+      <div class="chart-container">
+        <svg class="chart-svg" viewBox="0 0 3840 2160" xmlns="http://www.w3.org/2000/svg">
+          <text class="mixed-chart-title" x="1920" y="300">Performance Analytics</text>
+
+          <rect x="300" y="500" width="3240" height="1400" fill="none" stroke="#333" stroke-width="8" />
+
+          <g stroke="#333" stroke-width="4" opacity="0.2">
+            <line x1="300" y1="700" x2="3540" y2="700" />
+            <line x1="300" y1="900" x2="3540" y2="900" />
+            <line x1="300" y1="1100" x2="3540" y2="1100" />
+            <line x1="300" y1="1300" x2="3540" y2="1300" />
+            <line x1="300" y1="1500" x2="3540" y2="1500" />
+            <line x1="300" y1="1700" x2="3540" y2="1700" />
+
+            <line x1="840" y1="500" x2="840" y2="1900" />
+            <line x1="1380" y1="500" x2="1380" y2="1900" />
+            <line x1="1920" y1="500" x2="1920" y2="1900" />
+            <line x1="2460" y1="500" x2="2460" y2="1900" />
+            <line x1="3000" y1="500" x2="3000" y2="1900" />
+          </g>
+
+          <g class="bars">
+            <rect class="mixed-chart-bar" x="480" y="1200" width="240" height="700" />
+            <rect class="mixed-chart-bar" x="1020" y="1000" width="240" height="900" />
+            <rect class="mixed-chart-bar" x="1560" y="800" width="240" height="1100" />
+            <rect class="mixed-chart-bar" x="2100" y="1100" width="240" height="800" />
+            <rect class="mixed-chart-bar" x="2640" y="600" width="240" height="1300" />
+            <rect class="mixed-chart-bar" x="3180" y="900" width="240" height="1000" />
+          </g>
+
+          <polyline class="mixed-chart-line" points="600,1500 1140,1200 1680,900 2220,1350 2760,750 3300,1200" />
+
+          <g class="points">
+            <circle class="mixed-chart-point" cx="600" cy="1500" />
+            <circle class="mixed-chart-point" cx="1140" cy="1200" />
+            <circle class="mixed-chart-point" cx="1680" cy="900" />
+            <circle class="mixed-chart-point" cx="2220" cy="1350" />
+            <circle class="mixed-chart-point" cx="2760" cy="750" />
+            <circle class="mixed-chart-point" cx="3300" cy="1200" />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- JS Animation Slide -->
+    <div class="slide js-animation-slide" data-type="js-animation" data-duration="6000">
+      <div class="slide-label js-animation">⚡ Interactive JS Animation</div>
+      <canvas id="jsAnimationCanvas" width="3840" height="2160"></canvas>
+    </div>
+
+    <!-- Image Slide -->
+    <div class="slide" data-type="image" data-duration="5000">
+      <div class="slide-label image">🖼️ 2K Image</div>
+      <img
+        src="https://d2tyu887lcxnka.cloudfront.net/brightSign_test_presentation/GL_BG_2K.png"
+        alt="2K Background Image" />
+    </div>
+
+    <!-- Additional Image Slide -->
+    <div class="slide" data-type="image" data-duration="5000">
+      <div class="slide-label image">🌅 Random 4K Image</div>
+      <img src="https://picsum.photos/3840/2160?random=1" alt="4K Random Image" />
+    </div>
+
+    <!-- Split Slide: Animation + Video -->
+    <div class="slide split-slide" data-type="split" data-duration="20000">
+      <div class="slide-label split">🔄 CSS Animation + 4K Video</div>
+      <div class="split-left">
+        <div class="split-chart-container">
+          <svg class="split-chart-svg" viewBox="0 0 1920 2160" xmlns="http://www.w3.org/2000/svg">
+            <text class="split-chart-title" x="960" y="200">Live Data</text>
+    
+            <rect x="200" y="300" width="1520" height="1600" fill="none" stroke="#333" stroke-width="6" />
+    
+            <g stroke="#333" stroke-width="3" opacity="0.2">
+              <line x1="200" y1="500" x2="1720" y2="500" />
+              <line x1="200" y1="700" x2="1720" y2="700" />
+              <line x1="200" y1="900" x2="1720" y2="900" />
+              <line x1="200" y1="1100" x2="1720" y2="1100" />
+              <line x1="200" y1="1300" x2="1720" y2="1300" />
+              <line x1="200" y1="1500" x2="1720" y2="1500" />
+              <line x1="200" y1="1700" x2="1720" y2="1700" />
+    
+              <line x1="500" y1="300" x2="500" y2="1900" />
+              <line x1="800" y1="300" x2="800" y2="1900" />
+              <line x1="1100" y1="300" x2="1100" y2="1900" />
+              <line x1="1400" y1="300" x2="1400" y2="1900" />
+            </g>
+    
+            <g class="bars">
+              <rect class="split-chart-bar" x="300" y="1200" width="150" height="700" />
+              <rect class="split-chart-bar" x="600" y="1000" width="150" height="900" />
+              <rect class="split-chart-bar" x="900" y="800" width="150" height="1100" />
+              <rect class="split-chart-bar" x="1200" y="1100" width="150" height="800" />
+              <rect class="split-chart-bar" x="1500" y="600" width="150" height="1300" />
+            </g>
+    
+            <polyline class="split-chart-line" points="375,1400 675,1200 975,900 1275,1300 1575,700" />
+    
+            <g class="points">
+              <circle class="split-chart-point" cx="375" cy="1400" />
+              <circle class="split-chart-point" cx="675" cy="1200" />
+              <circle class="split-chart-point" cx="975" cy="900" />
+              <circle class="split-chart-point" cx="1275" cy="1300" />
+              <circle class="split-chart-point" cx="1575" cy="700" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    
+      <div class="split-right">
+        <video muted preload="auto">
+          <source
+            src="https://d2tyu887lcxnka.cloudfront.net/brightSign_test_presentation/1409899-uhd_3840_2160_25fps.mp4"
+            type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+    </div>
+
+    <!-- Video Slide 1 -->
+    <div class="slide" data-type="video">
+      <div class="slide-label video">🎥 2K Video</div>
+      <video muted preload="auto">
+        <source src="https://d2tyu887lcxnka.cloudfront.net/brightSign_test_presentation/1409899-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <!-- Video Slide 2 -->
+    <div class="slide" data-type="video">
+      <div class="slide-label video">🎬 4K Video</div>
+      <video muted preload="auto">
+        <source src="https://d2tyu887lcxnka.cloudfront.net/brightSign_test_presentation/1717998-uhd_3840_2160_25fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+
+
+  <script>
+    // Функція для відправки даних моніторингу
+    function logSliderAction(actionType, details) {
+      // Додаємо назву поточної HTML сторінки
+      const pageName = window.location.pathname.split('/').pop() || 'index.html';
+      details.pageName = pageName;
+
+      const data = {
+        action_type: actionType,
+        details: details,
+        timestamp: new Date().toISOString()
+      };
+
+      fetch('/log_action', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      }).catch(err => console.error('Logging error:', err));
+    }
+
+    class MixedSlider {
+      constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentIndex = 0;
+        this.isTransitioning = false;
+        this.currentTimeout = null;
+        this.slideStartTime = null;
+        this.animationInterval = null;
+
+        this.init();
+      }
+
+      init() {
+        // Start with first slide
+        this.showSlide(0);
+        this.scheduleNext();
+
+        // Preload videos
+        this.preloadVideos();
+      }
+
+      preloadVideos() {
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+          video.addEventListener('loadeddata', () => {
+            console.log('Video loaded:', video.src);
+          });
+
+          video.addEventListener('error', (e) => {
+            console.error('Video error:', e);
+          });
+        });
+      }
+
+      showSlide(index) {
+        if (this.isTransitioning) return;
+
+        this.isTransitioning = true;
+        this.slideStartTime = Date.now();
+
+        // Hide all slides
+        this.slides.forEach(slide => slide.classList.remove('active'));
+
+        // Stop all videos
+        document.querySelectorAll('video').forEach(video => {
+          video.pause();
+          video.currentTime = 0;
+        });
+
+        // Show current slide
+        const currentSlide = this.slides[index];
+        currentSlide.classList.add('active');
+
+        // Handle different slide types
+        const slideType = currentSlide.dataset.type;
+
+        setTimeout(() => {
+          this.isTransitioning = false;
+
+          if (slideType === 'video') {
+            this.handleVideo(currentSlide);
+          } else if (slideType === 'animation') {
+            this.handleAnimation(currentSlide);
+          } else if (slideType === 'js-animation') {
+            this.handleJSAnimation(currentSlide);
+          } else if (slideType === 'image') {
+            this.handleImage(currentSlide);
+          } else if (slideType === 'split') {
+            this.handleSplit(currentSlide);
+          }
+        }, 1000); // Wait for transition
+      }
+
+      handleVideo(slide) {
+        const video = slide.querySelector('video');
+        if (video) {
+          video.play().then(() => {
+            console.log('Video started playing');
+          }).catch(e => {
+            console.error('Video play error:', e);
+            // If video fails, move to next slide after 5 seconds
+            this.currentTimeout = setTimeout(() => this.nextSlide(), 5000);
+          });
+
+          video.addEventListener('ended', () => {
+            console.log('Video ended');
+
+            // Логуємо завершення відео та автоматичне перемикання
+            logSliderAction('slider_video_ended', {
+              sliderType: 'mixed-slider',
+              videoSrc: video.querySelector('source')?.src || 'unknown',
+              videoDuration: video.duration,
+              slideIndex: this.currentIndex + 1,
+              nextSlideIndex: ((this.currentIndex + 1) % this.slides.length) + 1,
+              actualWatchTime: Date.now() - this.slideStartTime
+            });
+
+            this.nextSlide();
+          }, { once: true });
+
+          video.addEventListener('error', () => {
+            console.error('Video playback error');
+            this.currentTimeout = setTimeout(() => this.nextSlide(), 2000);
+          }, { once: true });
+        }
+      }
+
+      handleAnimation(slide) {
+        const duration = parseInt(slide.dataset.duration) || 15000;
+        console.log(`Animation slide for ${duration}ms`);
+
+        // Періодичне логування програвання анімації кожні 2 секунди
+        const animationStartTime = Date.now();
+        this.animationInterval = setInterval(() => {
+          const uptime = Date.now() - animationStartTime;
+          logSliderAction('animation_heartbeat', {
+            sliderType: 'mixed-slider',
+            slideIndex: this.currentIndex + 1,
+            slideType: 'animation',
+            totalSlides: this.slides.length,
+            animationType: 'svg-chart-animation',
+            uptime: uptime,
+            plannedDuration: duration
+          });
+        }, 2000); // Кожні 2 секунди
+
+        this.currentTimeout = setTimeout(() => {
+          // Зупиняємо періодичне логування
+          if (this.animationInterval) {
+            clearInterval(this.animationInterval);
+            this.animationInterval = null;
+          }
+
+          if (this.splitInterval) {
+            clearInterval(this.splitInterval);
+            this.splitInterval = null;
+          }
+
+          if (this.jsAnimationInterval) {
+            clearInterval(this.jsAnimationInterval);
+            this.jsAnimationInterval = null;
+          }
+
+          // Stop canvas animation if running
+          this.stopCanvasAnimation();
+
+          // Логуємо завершення анімації та автоматичне перемикання
+          logSliderAction('slider_animation_cycle', {
+            sliderType: 'mixed-slider',
+            animationType: 'svg-chart-animation',
+            cycleDuration: duration,
+            slideIndex: this.currentIndex + 1,
+            nextSlideIndex: ((this.currentIndex + 1) % this.slides.length) + 1,
+            actualDisplayTime: Date.now() - this.slideStartTime
+          });
+
+          this.nextSlide();
+        }, duration);
+      }
+
+      handleJSAnimation(slide) {
+        const duration = parseInt(slide.dataset.duration) || 6000;
+        console.log(`JS Animation slide for ${duration}ms`);
+
+        // Start canvas animation
+        this.startCanvasAnimation();
+
+        // Періодичне логування JS анімації кожні 2 секунди
+        const jsAnimationStartTime = Date.now();
+        this.jsAnimationInterval = setInterval(() => {
+          const uptime = Date.now() - jsAnimationStartTime;
+          logSliderAction('js_animation_heartbeat', {
+            sliderType: 'mixed-slider',
+            slideIndex: this.currentIndex + 1,
+            slideType: 'js-animation',
+            totalSlides: this.slides.length,
+            animationType: 'canvas-chart-animation',
+            uptime: uptime,
+            plannedDuration: duration
+          });
+        }, 2000);
+
+        this.currentTimeout = setTimeout(() => {
+          // Зупиняємо анімацію та логування
+          this.stopCanvasAnimation();
+          if (this.jsAnimationInterval) {
+            clearInterval(this.jsAnimationInterval);
+            this.jsAnimationInterval = null;
+          }
+
+          // Логуємо завершення JS анімації
+          logSliderAction('slider_js_animation_cycle', {
+            sliderType: 'mixed-slider',
+            animationType: 'canvas-chart-animation',
+            cycleDuration: duration,
+            slideIndex: this.currentIndex + 1,
+            nextSlideIndex: ((this.currentIndex + 1) % this.slides.length) + 1,
+            actualDisplayTime: Date.now() - this.slideStartTime
+          });
+
+          this.nextSlide();
+        }, duration);
+      }
+
+      startCanvasAnimation() {
+        const canvas = document.getElementById('jsAnimationCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Animation state
+        this.animationState = {
+          startTime: Date.now(),
+          bars: [
+            { x: 600, y: 1800, height: 0, targetHeight: 500, color: '#ff6b6b', delay: 0, pulse: 0, hoverScale: 1 },
+            { x: 1200, y: 1800, height: 0, targetHeight: 700, color: '#ff6b6b', delay: 500, pulse: 0, hoverScale: 1 },
+            { x: 1800, y: 1800, height: 0, targetHeight: 900, color: '#ff6b6b', delay: 1000, pulse: 0, hoverScale: 1 },
+            { x: 2400, y: 1800, height: 0, targetHeight: 600, color: '#ff6b6b', delay: 1500, pulse: 0, hoverScale: 1 },
+            { x: 3000, y: 1800, height: 0, targetHeight: 800, color: '#ff6b6b', delay: 2000, pulse: 0, hoverScale: 1 }
+          ],
+          linePoints: [
+            { x: 675, y: 1300, targetY: 1300, currentY: 1800, visible: false, delay: 3000, bounce: 0, ripple: 0 },
+            { x: 1275, y: 1100, targetY: 1100, currentY: 1800, visible: false, delay: 3300, bounce: 0, ripple: 0 },
+            { x: 1875, y: 900, targetY: 900, currentY: 1800, visible: false, delay: 3600, bounce: 0, ripple: 0 },
+            { x: 2475, y: 1200, targetY: 1200, currentY: 1800, visible: false, delay: 3900, bounce: 0, ripple: 0 },
+            { x: 3075, y: 1000, targetY: 1000, currentY: 1800, visible: false, delay: 4200, bounce: 0, ripple: 0 }
+          ],
+          particles: [],
+          waveOffset: 0,
+          dataStreams: [],
+          energyBalls: [],
+          mouseX: 0,
+          mouseY: 0,
+          gridPulse: 0,
+          titleScale: 1,
+          interactiveElements: []
+        };
+
+        // Add mouse interaction
+        canvas.addEventListener('mousemove', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          this.animationState.mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+          this.animationState.mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        });
+
+        // Add click interaction
+        canvas.addEventListener('click', (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const clickX = (e.clientX - rect.left) * (canvas.width / rect.width);
+          const clickY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+          // Create explosion effect at click position
+          for (let i = 0; i < 15; i++) {
+            this.animationState.particles.push({
+              x: clickX,
+              y: clickY,
+              vx: (Math.random() - 0.5) * 10,
+              vy: (Math.random() - 0.5) * 10,
+              life: 60,
+              maxLife: 60,
+              size: Math.random() * 6 + 2,
+              color: ['#ff6b6b', '#00ff88', '#ffcc02', '#4ecdc4', '#45b7d1'][Math.floor(Math.random() * 5)]
+            });
+          }
+
+          // Add energy ball
+          this.animationState.energyBalls.push({
+            x: clickX,
+            y: clickY,
+            radius: 0,
+            maxRadius: 80,
+            life: 100,
+            color: '#45b7d1'
+          });
+        });
+
+        this.canvasAnimationRunning = true;
+        this.animateCanvas(ctx, canvas);
+      }
+
+      animateCanvas(ctx, canvas) {
+        if (!this.canvasAnimationRunning) return;
+
+        const now = Date.now();
+        const elapsed = now - this.animationState.startTime;
+
+        // Update animation variables
+        this.animationState.waveOffset += 0.02;
+        this.animationState.gridPulse = Math.sin(elapsed * 0.001) * 0.3 + 0.7;
+
+        // Mouse proximity effects
+        const mouseInfluence = 200;
+
+        // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Set canvas scale for 4K
+        ctx.save();
+
+        // Draw animated background waves
+        ctx.globalAlpha = 0.1;
+        for (let i = 0; i < 3; i++) {
+          ctx.strokeStyle = ['#ff6b6b', '#00ff88', '#ffcc02'][i];
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          for (let x = 0; x < canvas.width; x += 10) {
+            const y = Math.sin((x * 0.01) + this.animationState.waveOffset + (i * 2)) * 30 + (canvas.height * 0.8) + (i * 50);
+            if (x === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+
+        // Draw interactive title with mouse proximity effect
+        const titleDistance = Math.sqrt(Math.pow(this.animationState.mouseX - canvas.width / 2, 2) + Math.pow(this.animationState.mouseY - 300, 2));
+        if (titleDistance < 300) {
+          this.animationState.titleScale = Math.max(1, 1.2 - (titleDistance / 300) * 0.2);
+        } else {
+          this.animationState.titleScale = Math.max(1, this.animationState.titleScale * 0.95);
+        }
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = `bold ${96 * this.animationState.titleScale}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.shadowColor = titleDistance < 300 ? '#45b7d1' : '#ffffff';
+        ctx.shadowBlur = 20;
+        ctx.fillText('Interactive Dashboard', canvas.width / 2, 300);
+        ctx.shadowBlur = 0;
+
+        // Draw interactive grid with pulse effect
+        ctx.strokeStyle = `rgba(68, 68, 68, ${0.3 * this.animationState.gridPulse})`;
+        ctx.lineWidth = 4;
+
+        // Horizontal lines with mouse interaction
+        for (let i = 600; i <= 1800; i += 200) {
+          ctx.beginPath();
+          const lineDistance = Math.abs(this.animationState.mouseY - i);
+          if (lineDistance < 100) {
+            ctx.strokeStyle = `rgba(69, 183, 209, ${0.8 - (lineDistance / 100) * 0.5})`;
+            ctx.lineWidth = 6;
+          } else {
+            ctx.strokeStyle = `rgba(68, 68, 68, ${0.3 * this.animationState.gridPulse})`;
+            ctx.lineWidth = 4;
+          }
+          ctx.moveTo(400, i);
+          ctx.lineTo(3440, i);
+          ctx.stroke();
+        }
+
+        // Vertical lines with mouse interaction
+        for (let i = 800; i <= 3200; i += 600) {
+          ctx.beginPath();
+          const lineDistance = Math.abs(this.animationState.mouseX - i);
+          if (lineDistance < 100) {
+            ctx.strokeStyle = `rgba(69, 183, 209, ${0.8 - (lineDistance / 100) * 0.5})`;
+            ctx.lineWidth = 6;
+          } else {
+            ctx.strokeStyle = `rgba(68, 68, 68, ${0.3 * this.animationState.gridPulse})`;
+            ctx.lineWidth = 4;
+          }
+          ctx.moveTo(i, 500);
+          ctx.lineTo(i, 1900);
+          ctx.stroke();
+        }
+
+        // Chart border
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 8;
+        ctx.beginPath();
+        ctx.rect(400, 500, 3040, 1400);
+        ctx.stroke();
+
+        // Animate bars with interactive effects
+        this.animationState.bars.forEach((bar, index) => {
+          if (elapsed > bar.delay) {
+            const progress = Math.min((elapsed - bar.delay) / 1000, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 3);
+            bar.height = easeProgress * bar.targetHeight;
+
+            // Mouse proximity effect
+            const barDistance = Math.sqrt(Math.pow(this.animationState.mouseX - (bar.x + 75), 2) + Math.pow(this.animationState.mouseY - bar.y, 2));
+            if (barDistance < 150) {
+              bar.hoverScale = Math.min(1.3, 1 + (150 - barDistance) / 150 * 0.3);
+            } else {
+              bar.hoverScale = Math.max(1, bar.hoverScale * 0.95);
+            }
+
+            // Pulse effect
+            bar.pulse += 0.1;
+            const pulseScale = 1 + Math.sin(bar.pulse) * 0.05;
+
+            // Draw bar with dynamic effects
+            const finalScale = bar.hoverScale * pulseScale;
+            const barWidth = 150 * finalScale;
+            const barHeight = bar.height * finalScale;
+            const barX = bar.x + 75 - barWidth / 2;
+
+            ctx.fillStyle = barDistance < 150 ? '#4ecdc4' : bar.color;
+            ctx.shadowColor = barDistance < 150 ? '#4ecdc4' : bar.color;
+            ctx.shadowBlur = barDistance < 150 ? 25 : 15;
+            ctx.fillRect(barX, bar.y - barHeight, barWidth, barHeight);
+            ctx.shadowBlur = 0;
+
+            // Add data streams from bars
+            if (elapsed > bar.delay + 2000 && Math.random() < 0.02) {
+              this.animationState.dataStreams.push({
+                x: bar.x + 75,
+                y: bar.y - bar.height,
+                targetX: Math.random() * canvas.width,
+                targetY: Math.random() * 400 + 500,
+                life: 120,
+                color: bar.color,
+                speed: 0.02
+              });
+            }
+          }
+        });
+
+        // Animate line points with interactive effects
+        let visiblePoints = [];
+        this.animationState.linePoints.forEach((point, index) => {
+          if (elapsed > point.delay) {
+            point.visible = true;
+            const progress = Math.min((elapsed - point.delay) / 500, 1);
+            const easeProgress = 1 - Math.pow(1 - progress, 2);
+            point.currentY = point.targetY + (1800 - point.targetY) * (1 - easeProgress);
+            visiblePoints.push(point);
+
+            // Mouse proximity effect
+            const pointDistance = Math.sqrt(Math.pow(this.animationState.mouseX - point.x, 2) + Math.pow(this.animationState.mouseY - point.currentY, 2));
+            if (pointDistance < 100) {
+              point.bounce = Math.sin(elapsed * 0.01 + index) * 20;
+              point.ripple = 30 - pointDistance * 0.3;
+            } else {
+              point.bounce *= 0.9;
+              point.ripple *= 0.9;
+            }
+
+            // Draw ripple effect
+            if (point.ripple > 0) {
+              ctx.strokeStyle = `rgba(255, 204, 2, ${point.ripple / 30})`;
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(point.x, point.currentY + point.bounce, point.ripple, 0, Math.PI * 2);
+              ctx.stroke();
+            }
+
+            // Draw point with dynamic effects
+            const pointSize = pointDistance < 100 ? 16 + (100 - pointDistance) * 0.1 : 12;
+            ctx.fillStyle = pointDistance < 100 ? '#45b7d1' : '#ffcc02';
+            ctx.shadowColor = pointDistance < 100 ? '#45b7d1' : '#ffcc02';
+            ctx.shadowBlur = pointDistance < 100 ? 20 : 10;
+            ctx.beginPath();
+            ctx.arc(point.x, point.currentY + point.bounce, pointSize, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        });
+
+        // Draw line
+        if (visiblePoints.length > 1) {
+          ctx.strokeStyle = '#00ff88';
+          ctx.lineWidth = 8;
+          ctx.shadowColor = '#00ff88';
+          ctx.shadowBlur = 15;
+          ctx.beginPath();
+          ctx.moveTo(visiblePoints[0].x, visiblePoints[0].currentY);
+          for (let i = 1; i < visiblePoints.length; i++) {
+            ctx.lineTo(visiblePoints[i].x, visiblePoints[i].currentY);
+          }
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+        }
+
+        // Add floating particles
+        if (elapsed > 2000 && Math.random() < 0.1) {
+          this.animationState.particles.push({
+            x: Math.random() * canvas.width,
+            y: canvas.height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: -Math.random() * 3 - 1,
+            life: 100,
+            maxLife: 100,
+            color: ['#ff6b6b', '#00ff88', '#ffcc02'][Math.floor(Math.random() * 3)]
+          });
+        }
+
+        // Update and draw particles
+        this.animationState.particles = this.animationState.particles.filter(particle => {
+          particle.x += particle.vx;
+          particle.y += particle.vy;
+          particle.life--;
+          particle.vx *= 0.99; // Add friction
+          particle.vy *= 0.99;
+
+          if (particle.life > 0) {
+            const alpha = particle.life / particle.maxLife;
+            const size = (particle.size || 3) * alpha;
+            ctx.fillStyle = particle.color + Math.floor(alpha * 255).toString(16).padStart(2, '0');
+            ctx.shadowColor = particle.color;
+            ctx.shadowBlur = size * 2;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            return true;
+          }
+          return false;
+        });
+
+        // Update and draw data streams
+        this.animationState.dataStreams = this.animationState.dataStreams.filter(stream => {
+          stream.life--;
+          const progress = 1 - (stream.life / 120);
+          stream.x = stream.x + (stream.targetX - stream.x) * stream.speed;
+          stream.y = stream.y + (stream.targetY - stream.y) * stream.speed;
+
+          if (stream.life > 0) {
+            ctx.strokeStyle = stream.color + Math.floor((stream.life / 120) * 100).toString(16).padStart(2, '0');
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(stream.x - 20, stream.y);
+            ctx.lineTo(stream.x, stream.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            return true;
+          }
+          return false;
+        });
+
+        // Update and draw energy balls
+        this.animationState.energyBalls = this.animationState.energyBalls.filter(ball => {
+          ball.life--;
+          const progress = 1 - (ball.life / 100);
+          ball.radius = ball.maxRadius * Math.sin(progress * Math.PI);
+
+          if (ball.life > 0) {
+            const alpha = ball.life / 100;
+            ctx.strokeStyle = ball.color + Math.floor(alpha * 100).toString(16).padStart(2, '0');
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // Inner glow
+            ctx.strokeStyle = ball.color + Math.floor(alpha * 50).toString(16).padStart(2, '0');
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius * 0.7, 0, Math.PI * 2);
+            ctx.stroke();
+            return true;
+          }
+          return false;
+        });
+
+        ctx.restore();
+
+        requestAnimationFrame(() => this.animateCanvas(ctx, canvas));
+      }
+
+      stopCanvasAnimation() {
+        this.canvasAnimationRunning = false;
+      }
+
+      handleImage(slide) {
+        const duration = parseInt(slide.dataset.duration) || 5000;
+        console.log(`Image slide for ${duration}ms`);
+
+        this.currentTimeout = setTimeout(() => {
+          // Логуємо завершення показу зображення та автоматичне перемикання
+          logSliderAction('slider_auto_next', {
+            sliderType: 'mixed-slider',
+            duration: duration,
+            slideIndex: this.currentIndex + 1,
+            slideType: 'image',
+            nextSlideIndex: ((this.currentIndex + 1) % this.slides.length) + 1,
+            actualDisplayTime: Date.now() - this.slideStartTime,
+            imageSrc: slide.querySelector('img')?.src || 'unknown'
+          });
+
+          this.nextSlide();
+        }, duration);
+      }
+
+      handleSplit(slide) {
+        const duration = parseInt(slide.dataset.duration) || 20000;
+        console.log(`Split slide (animation + video) for ${duration}ms`);
+
+        // Start video on the right side
+        const video = slide.querySelector('video');
+        if (video) {
+          video.play().then(() => {
+            console.log('Split slide video started playing');
+          }).catch(e => {
+            console.error('Split slide video play error:', e);
+          });
+        }
+
+        // Періодичне логування split слайду кожні 3 секунди
+        const splitStartTime = Date.now();
+        this.splitInterval = setInterval(() => {
+          const uptime = Date.now() - splitStartTime;
+          logSliderAction('split_slide_heartbeat', {
+            sliderType: 'mixed-slider',
+            slideIndex: this.currentIndex + 1,
+            slideType: 'split',
+            totalSlides: this.slides.length,
+            uptime: uptime,
+            plannedDuration: duration,
+            videoSrc: video?.querySelector('source')?.src || 'unknown'
+          });
+        }, 3000);
+
+        // Set timeout for slide duration
+        this.currentTimeout = setTimeout(() => {
+          // Зупиняємо періодичне логування
+          if (this.splitInterval) {
+            clearInterval(this.splitInterval);
+            this.splitInterval = null;
+          }
+
+          // Логуємо завершення split слайду
+          logSliderAction('slider_split_completed', {
+            sliderType: 'mixed-slider',
+            duration: duration,
+            slideIndex: this.currentIndex + 1,
+            slideType: 'split',
+            nextSlideIndex: ((this.currentIndex + 1) % this.slides.length) + 1,
+            actualDisplayTime: Date.now() - this.slideStartTime,
+            videoSrc: video?.querySelector('source')?.src || 'unknown'
+          });
+
+          this.nextSlide();
+        }, duration);
+      }
+
+      nextSlide() {
+        if (this.currentTimeout) {
+          clearTimeout(this.currentTimeout);
+          this.currentTimeout = null;
+        }
+
+        if (this.animationInterval) {
+          clearInterval(this.animationInterval);
+          this.animationInterval = null;
+        }
+
+        this.currentIndex = (this.currentIndex + 1) % this.slides.length;
+        console.log(`Moving to slide ${this.currentIndex + 1}/${this.slides.length}`);
+
+        this.showSlide(this.currentIndex);
+      }
+
+      scheduleNext() {
+        // This method is called from init, actual scheduling happens in individual handlers
+      }
+    }
+
+    // Initialize slider when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      new MixedSlider();
+    });
+  </script>
+</body>
+
+</html>
